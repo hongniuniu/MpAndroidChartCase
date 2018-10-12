@@ -30,6 +30,7 @@ import java.util.List;
 public final class LineChartModule {
 
     static DecimalFormat sDecimalFormat;
+
     static {
         sDecimalFormat = new DecimalFormat("#.##%"); // 百分比小数，精确两位小数
     }
@@ -40,7 +41,7 @@ public final class LineChartModule {
     static int CHART_ANIM_LINE_DURATION = 1200;
     static final int MOCK_COUNT = 3;
 
-    interface VALUE_TYPE{
+    interface VALUE_TYPE {
         String DAY = "day";
         String WEEK = "week";
         String MONTH = "month";
@@ -48,7 +49,7 @@ public final class LineChartModule {
         String SEASONS = "seasons"; // 四季
     }
 
-    public static int getCountByValueType(String valueType){
+    public static int getCountByValueType(String valueType) {
         return xValuesProcess(valueType).length;
     }
 
@@ -57,13 +58,14 @@ public final class LineChartModule {
 
     static int[] COLORS = {Color.rgb(69, 113, 214), Color.rgb(101, 226, 175),
             Color.rgb(255, 196, 0), Color.rgb(255, 105, 83),
-            Color.rgb(89, 210, 252),Color.rgb(255, 140, 73),Color.rgb(255, 50, 68)};
+            Color.rgb(89, 210, 252), Color.rgb(255, 140, 73), Color.rgb(255, 50, 68)};
 
     public static String[] xValuesProcess(String valueType) {
         switch (valueType) {
             case VALUE_TYPE.DAY:
-                return new String[]{"08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
-                        "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"};
+                return new String[]{"00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00",
+                        "09:00", "10:00", "11:00", "12:00", "13:00", "14:00",
+                        "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"};
             case VALUE_TYPE.WEEK:
                 return new String[]{"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
             case VALUE_TYPE.MONTH:
@@ -73,9 +75,8 @@ public final class LineChartModule {
                         "10-25", "10-26", "10-27", "10-28", "10-29", "10-30", "10-31"};
             case VALUE_TYPE.YEAR:
                 return new String[]{"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"};
-
             case VALUE_TYPE.SEASONS:
-                return new String[]{"春", "夏","秋","冬"};
+                return new String[]{"春", "夏", "秋", "冬"};
             default:
                 break;
         }
@@ -84,15 +85,17 @@ public final class LineChartModule {
 
     /**
      * 添加限制线
+     *
      * @param axis
      * @param mean
      */
-    public static void addLimitLine(YAxis axis, float mean){
-        addLimitLine(axis,mean,"");
+    public static void addLimitLine(YAxis axis, float mean) {
+        addLimitLine(axis, mean, "");
     }
 
     /**
      * 添加限制线
+     *
      * @param axis
      * @param mean
      * @param label
@@ -115,9 +118,10 @@ public final class LineChartModule {
 
     /**
      * 计算统计点 | 数据更新 | 数据填充
+     *
      * @return
      */
-    private static void setDataLine(LineChart chart, List<Entry> entries,boolean isFill) {
+    private static void setDataLine(LineChart chart, List<Entry> entries, boolean isFill) {
         LineDataSet dataSet;
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) { // 数据更新
             dataSet = (LineDataSet) chart.getData().getDataSetByIndex(0);
@@ -155,21 +159,23 @@ public final class LineChartModule {
 
     /**
      * 更新图表
+     *
      * @param chart     图表
      * @param valueType 模拟数据类型
      */
-    public static void notifyDataToLine(LineChart chart, String valueType,boolean isFill) {
-        notifyDataToLine(chart,valueType,0f,isFill);
+    public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill) {
+        notifyDataToLine(chart, valueType, 0f, isFill);
     }
 
     /**
      * 更新图表
+     *
      * @param chart     图表
      * @param valueType 模拟数据类型
-     * @param mean 平均数
-     * @param isFill 是否填充背景
+     * @param mean      平均数
+     * @param isFill    是否填充背景
      */
-    public static void notifyDataToLine(LineChart chart, String valueType,float mean,boolean isFill) {
+    public static void notifyDataToLine(LineChart chart, String valueType, float mean, boolean isFill) {
         int maxValue = 0; // 图表数据最大值
         final String[] xVals = xValuesProcess(valueType);
         final List<Entry> yVals = new ArrayList<>(xVals.length);
@@ -199,14 +205,15 @@ public final class LineChartModule {
         } else { // 记得回刷y轴坐标值
             chart.getAxisLeft().setAxisMaximum(maxValue + 6);
         }
-        setDataLine(chart, yVals,isFill);
+        setDataLine(chart, yVals, isFill);
     }
 
     /**
      * 计算统计点 | 数据更新 | 数据填充
+     *
      * @return
      */
-    private static void setDataLineByMultiple(LineChart chart, List<List<Entry>> setList,List<String> labels) {
+    private static void setDataLineByMultiple(LineChart chart, List<List<Entry>> setList, List<String> labels) {
         LineDataSet set = null;
         List<ILineDataSet> idsets = new ArrayList<>(setList.size());
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) {
