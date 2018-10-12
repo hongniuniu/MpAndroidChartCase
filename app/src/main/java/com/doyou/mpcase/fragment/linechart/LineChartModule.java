@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.util.Log;
 
 import com.dongni.tools.EmptyUtils;
+import com.doyou.mpcase.R;
+import com.doyou.mpcase.marker.CstMarkerView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -122,6 +124,11 @@ public final class LineChartModule {
      * @return
      */
     private static void setDataLine(LineChart chart, List<Entry> entries, boolean isFill) {
+
+        CstMarkerView cmv = new CstMarkerView(chart.getContext(), R.layout.chart_marker_view);
+        cmv.setChartView(chart);
+        chart.setMarker(cmv);
+
         LineDataSet dataSet;
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) { // 数据更新
             dataSet = (LineDataSet) chart.getData().getDataSetByIndex(0);
@@ -140,7 +147,7 @@ public final class LineChartModule {
             dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); // 曲线
 //            dataSet.setDrawHighlightIndicators(true);   // 画高亮指示器,默认true
             dataSet.setHighLightColor(Color.rgb(244, 117, 117));// 高亮颜色,默认RGB(255, 187, 115)
-            dataSet.setDrawValues(true);// 显示每条数据的顶部值
+            dataSet.setDrawValues(false);// 隐藏每条数据的顶部值,默认显示
             dataSet.setValueFormatter(new IValueFormatter() {
                 @Override
                 public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {

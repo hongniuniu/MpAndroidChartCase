@@ -39,6 +39,16 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         loadData()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        releaseChartCache(lineOne)
+        releaseChartCache(lineTwo)
+        releaseChartCache(lineThree)
+        releaseChartCache(lineFour)
+        releaseChartCache(lineFive)
+        releaseChartCache(lineSix)
+    }
+
     private fun loadData() {
         lineOne.postDelayed({
             LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
@@ -156,6 +166,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
 //        xAxis.setCenterAxisLabels(true) // x轴中的label相对图表整体水平居中，可能导致的问题就是点图表的点和x轴的label对不上
         xAxis.granularity = 1f // 避免缩放时导致的标签重叠
         xAxis.isGranularityEnabled = true // 在轴值间隔上 启用/禁用 粒度控制。如果启用，轴间隔不允许低于某个粒度。默认值:假
+//        xAxis.axisLineWidth = 1f // 设置x轴的高度
 
         // y轴设置
         val leftAxis = lineChart.axisLeft
@@ -167,7 +178,9 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         leftAxis.setCenterAxisLabels(false) // 同x轴,y轴的这个属性设置true可能会导致y轴的最顶部被裁剪一部分，导致的显示不全的问题
         leftAxis.granularity = 1f // 同x轴
         leftAxis.isGranularityEnabled = isGranularity // 同x轴
+    }
 
-
+    private fun releaseChartCache(lineChart: LineChart){
+        lineChart.destroyDrawingCache()
     }
 }
