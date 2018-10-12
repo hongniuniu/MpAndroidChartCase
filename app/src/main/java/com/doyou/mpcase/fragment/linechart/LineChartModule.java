@@ -52,6 +52,10 @@ public final class LineChartModule {
         return new String[]{"2016", "2017", "2018"};
     }
 
+    static int[] COLORS = {Color.rgb(69, 113, 214), Color.rgb(101, 226, 175),
+            Color.rgb(255, 196, 0), Color.rgb(255, 105, 83),
+            Color.rgb(89, 210, 252),Color.rgb(255, 140, 73),Color.rgb(255, 50, 68)};
+
     public static String[] xValuesProcess(String valueType) {
         switch (valueType) {
             case VALUE_TYPE.DAY:
@@ -71,6 +75,7 @@ public final class LineChartModule {
         }
         return null;
     }
+
 
     /**
      * 计算统计点 | 数据更新 | 数据填充
@@ -148,17 +153,8 @@ public final class LineChartModule {
      */
     private static void setDataLineByMultiple(LineChart chart, List<List<Entry>> setList,List<String> labels) {
         LineDataSet set = null;
-//        ILineDataSet[] idset = new ILineDataSet[setList.size()];
         List<ILineDataSet> idsets = new ArrayList<>(setList.size());
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) {
-//            LineData lineData = chart.getData();
-//            for (int i = 0; i < sets.size(); i++) {
-//                set = (LineDataSet) lineData.getDataSetByIndex(i);
-//                set.setValues(setList.get(i));
-//            }
-//            lineData.notifyDataChanged();
-//            chart.notifyDataSetChanged();
-
             chart.clearValues();
             chart.setData(null);
             chart.notifyDataSetChanged();
@@ -166,36 +162,36 @@ public final class LineChartModule {
         }
 
         for (int i = 0; i < setList.size(); i++) {
-            set = new LineDataSet(setList.get(i), labels.get(i));
-            if (i == 0) {
-                set.setColor(Color.rgb(89, 181, 250)); // 曲线颜色自定义
-                set.setCircleColor(Color.rgb(89, 181, 250)); // 曲线上的圆点颜色自定义
-            } else if (i == 1) {
-                set.setColor(Color.rgb(101, 226, 175));
-                set.setCircleColor(Color.rgb(101, 226, 175));
-            } else if(i == 2){
-                set.setColor(Color.rgb(255, 196, 0));
-                set.setCircleColor(Color.rgb(255, 196, 0));
-            } else if(i == 3){
-                set.setColor(Color.rgb(255, 105, 83));
-                set.setCircleColor(Color.rgb(255, 105, 83));
-            } else if(i == 4){
-                set.setColor(Color.rgb(89, 210, 252));
-                set.setCircleColor(Color.rgb(89, 210, 252));
-            } else if(i == 5){
-                set.setColor(Color.rgb(255, 140, 73));
-                set.setCircleColor(Color.rgb(255, 140, 73));
-            } else if(i == 6){
-                set.setColor(Color.rgb(255, 140, 73));
-                set.setCircleColor(Color.rgb(255, 140, 73));
-            } else{
-                set.setColor(Color.rgb(255, 50, 68));
-                set.setCircleColor(Color.rgb(255, 50, 68));
+            set = new LineDataSet(setList.get(i), labels.get(i)); // 每条线的对象
+            int color = Color.rgb(255, 50, 68);
+            switch (i) {
+                case 0:
+                    color = Color.rgb(69, 113, 214);
+                    break;
+                case 1:
+                    color = Color.rgb(101, 226, 175);
+                    break;
+                case 2:
+                    color = Color.rgb(255, 196, 0);
+                    break;
+                case 3:
+                    color = Color.rgb(255, 105, 83);
+                    break;
+                case 4:
+                    color = Color.rgb(89, 210, 252);
+                    break;
+                case 5:
+                    color = Color.rgb(255, 140, 73);
+                    break;
+                default:
+                    break;
             }
-            set.setCircleRadius(2.f);
-            set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+            set.setColor(color); // 曲线颜色
+            set.setCircleColor(color); // 曲线上的圆点颜色
+            set.setCircleRadius(2.f); // 点的半径
+            set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); // 曲线
             set.setHighLightColor(Color.rgb(244, 117, 117));
-            set.setDrawCircleHole(false);
+            set.setDrawCircleHole(false); // 是否空心，false实心 true：空心，默认true
             set.setDrawValues(true);// 显示每条数据的顶部值
             set.setValueFormatter(new IValueFormatter() { // 显示的统计点的y轴的值格式化
                 @Override
@@ -208,16 +204,9 @@ public final class LineChartModule {
 
         LineData data = new LineData(idsets);
         data.setValueTextColor(Color.rgb(153, 153, 153));
-        data.setValueTextSize(9);
+        data.setValueTextSize(9f);
         chart.setData(data);
-        chart.animateX(CHART_ANIM_LINE_DURATION, Easing.EasingOption.Linear);
-
-//        if (EmptyUtils.isNotEmpty(sLineSets)) {
-//            sLineSets.clear();
-//            sLineSets = null;
-//        }
-//        sLineSets = new ArrayList<>(idsets.size());
-//        sLineSets.addAll(idsets);
+        chart.animateX(CHART_ANIM_LINE_DURATION, Easing.EasingOption.Linear); // 图表显示动画
     }
 
     public static void notifyDataToLineByMultiple(LineChart chart) {

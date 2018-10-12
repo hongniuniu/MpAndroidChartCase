@@ -29,6 +29,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         initLineChart(lineTwo, false,true)
         initLineChart(lineThree, false,true)
         initLineChart(lineFour, true,false)
+        initLineChart(lineFive, false,true)
 
         lineSectionTv.setOnClickListener(this)
         lineAllTv.setOnClickListener(this)
