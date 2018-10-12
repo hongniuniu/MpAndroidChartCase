@@ -11,8 +11,10 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +26,16 @@ import java.util.List;
  */
 public final class LineChartModule {
 
+    static DecimalFormat sDecimalFormat;
+    static {
+        sDecimalFormat = new DecimalFormat("#.##%"); // 百分比小数，精确两位小数
+    }
+
     /**
      * 图表折线图动画时间
      */
     static int CHART_ANIM_LINE_DURATION = 1200;
+    static final int MOCK_COUNT = 3;
 
     interface VALUE_TYPE{
         String DAY = "day";
@@ -38,6 +46,10 @@ public final class LineChartModule {
 
     public static int getCountByValueType(String valueType){
         return xValuesProcess(valueType).length;
+    }
+
+    public static String[] xYearMockData() {
+        return new String[]{"2016", "2017", "2018"};
     }
 
     public static String[] xValuesProcess(String valueType) {
@@ -128,6 +140,125 @@ public final class LineChartModule {
             }
         });
         setDataLine(chart, yVals,isFill);
+    }
+
+    /**
+     * 计算统计点 | 数据更新 | 数据填充
+     * @return
+     */
+    private static void setDataLineByMultiple(LineChart chart, List<List<Entry>> setList,List<String> labels) {
+        LineDataSet set = null;
+//        ILineDataSet[] idset = new ILineDataSet[setList.size()];
+        List<ILineDataSet> idsets = new ArrayList<>(setList.size());
+        if (chart.getData() != null && chart.getData().getDataSetCount() > 0) {
+//            LineData lineData = chart.getData();
+//            for (int i = 0; i < sets.size(); i++) {
+//                set = (LineDataSet) lineData.getDataSetByIndex(i);
+//                set.setValues(setList.get(i));
+//            }
+//            lineData.notifyDataChanged();
+//            chart.notifyDataSetChanged();
+
+            chart.clearValues();
+            chart.setData(null);
+            chart.notifyDataSetChanged();
+            chart.invalidate();
+        }
+
+        for (int i = 0; i < setList.size(); i++) {
+            set = new LineDataSet(setList.get(i), labels.get(i));
+            if (i == 0) {
+                set.setColor(Color.rgb(89, 181, 250)); // 曲线颜色自定义
+                set.setCircleColor(Color.rgb(89, 181, 250)); // 曲线上的圆点颜色自定义
+            } else if (i == 1) {
+                set.setColor(Color.rgb(101, 226, 175));
+                set.setCircleColor(Color.rgb(101, 226, 175));
+            } else if(i == 2){
+                set.setColor(Color.rgb(255, 196, 0));
+                set.setCircleColor(Color.rgb(255, 196, 0));
+            } else if(i == 3){
+                set.setColor(Color.rgb(255, 105, 83));
+                set.setCircleColor(Color.rgb(255, 105, 83));
+            } else if(i == 4){
+                set.setColor(Color.rgb(89, 210, 252));
+                set.setCircleColor(Color.rgb(89, 210, 252));
+            } else if(i == 5){
+                set.setColor(Color.rgb(255, 140, 73));
+                set.setCircleColor(Color.rgb(255, 140, 73));
+            } else if(i == 6){
+                set.setColor(Color.rgb(255, 140, 73));
+                set.setCircleColor(Color.rgb(255, 140, 73));
+            } else{
+                set.setColor(Color.rgb(255, 50, 68));
+                set.setCircleColor(Color.rgb(255, 50, 68));
+            }
+            set.setCircleRadius(2.f);
+            set.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+            set.setHighLightColor(Color.rgb(244, 117, 117));
+            set.setDrawCircleHole(false);
+            set.setDrawValues(true);// 显示每条数据的顶部值
+            set.setValueFormatter(new IValueFormatter() { // 显示的统计点的y轴的值格式化
+                @Override
+                public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                    return sDecimalFormat.format(value);
+                }
+            });
+            idsets.add(set);
+        }
+
+        LineData data = new LineData(idsets);
+        data.setValueTextColor(Color.rgb(153, 153, 153));
+        data.setValueTextSize(9);
+        chart.setData(data);
+        chart.animateX(CHART_ANIM_LINE_DURATION, Easing.EasingOption.Linear);
+
+//        if (EmptyUtils.isNotEmpty(sLineSets)) {
+//            sLineSets.clear();
+//            sLineSets = null;
+//        }
+//        sLineSets = new ArrayList<>(idsets.size());
+//        sLineSets.addAll(idsets);
+    }
+
+    public static void notifyDataToLineByMultiple(LineChart chart) {
+        // 申明外部集合
+        List<String> labels = new ArrayList<>(MOCK_COUNT);
+        List<List<Entry>> setList = new ArrayList<>(MOCK_COUNT);
+        final String[] xVals = xValuesProcess(VALUE_TYPE.YEAR);
+        final List<Entry> yVals1 = new ArrayList<>(xVals.length);
+        final List<Entry> yVals2 = new ArrayList<>(xVals.length);
+        final List<Entry> yVals3 = new ArrayList<>(xVals.length);
+        for (int i = 0; i < xYearMockData().length; i++) {
+            labels.add(xYearMockData()[i]);
+        }
+        for (int i = 0; i < xVals.length; i++) {
+            yVals1.add(new Entry(i, (float) (Math.random() * 0.2415)));
+            yVals2.add(new Entry(i, (float) (Math.random() * 0.3214)));
+            yVals3.add(new Entry(i, (float) (Math.random() * 0.1234)));
+        }
+        setList.add(yVals1);
+        setList.add(yVals2);
+        setList.add(yVals3);
+
+        chart.getXAxis().setAxisMaximum(xVals.length);// 最后一条数据绘制不出来的时候，设置这个可以解决问题
+        chart.getXAxis().setValueFormatter(new IAxisValueFormatter() { // 自定义x轴显示内容
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                if (value >= xVals.length || value < 0) {
+                    return "";
+                }
+                String x = xVals[(int) value];
+                Log.d("201806291546", "value = " + value + "-->xvalue = " + x);
+                return x;
+            }
+        });
+        chart.getAxisLeft().setValueFormatter(new IAxisValueFormatter() { // 自定义y轴并格式化坐标值
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return sDecimalFormat.format(value);
+            }
+        });
+        setDataLineByMultiple(chart, setList, labels);
     }
 
 

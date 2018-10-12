@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.doyou.mpcase.R
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
 import kotlinx.android.synthetic.main.linechart_fragment.*
@@ -24,8 +25,10 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initLineChart(lineOne, false)
-        initLineChart(lineTwo, false)
+        initLineChart(lineOne, false,true)
+        initLineChart(lineTwo, false,true)
+        initLineChart(lineThree, false,true)
+        initLineChart(lineFour, true,false)
 
         lineSectionTv.setOnClickListener(this)
         lineAllTv.setOnClickListener(this)
@@ -37,7 +40,14 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
     private fun loadData() {
         lineOne.postDelayed({
             LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
+
             LineChartModule.notifyDataToLine(lineTwo, LineChartModule.VALUE_TYPE.WEEK, false)
+
+            autoCalMatrixScale(lineThree, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.MONTH).toFloat())
+            LineChartModule.notifyDataToLine(lineThree, LineChartModule.VALUE_TYPE.MONTH, true)
+
+            autoCalMatrixScale(lineFour, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.YEAR).toFloat())
+            LineChartModule.notifyDataToLineByMultiple(lineFour)
         }, 240)
     }
 
@@ -91,7 +101,13 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         }
     }
 
-    private fun initLineChart(lineChart: LineChart,needLegend:Boolean){
+    /**
+     * 控件初始化
+     * @param lineChart 折线图控件
+     * @param needLegend 是否需要显示图例
+     * @param isGranularity isGranularity: Boolean // 特别注意哦，如果y轴需要显示小数，记得传false哦
+     */
+    private fun initLineChart(lineChart: LineChart,needLegend:Boolean,isGranularity: Boolean){
         // 基本设置
         lineChart.description.isEnabled = false
         lineChart.setDrawGridBackground(false)
@@ -108,10 +124,19 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         lineChart.setDragOffsetX(15f)
 
         // 图例设置
+        val legend = lineChart.legend
         if (needLegend){
-            lineChart.legend.isEnabled = true
+            legend.isEnabled = true
+            legend.form = Legend.LegendForm.CIRCLE
+            legend.textSize = 10f
+            legend.textColor = Color.rgb(149, 199, 255)
+            legend.orientation = Legend.LegendOrientation.HORIZONTAL
+            legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+            legend.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+            legend.xOffset = -12f // 默认感觉不是很水平居中，强制往左移动12dp
+            legend.setDrawInside(false) // 是否在坐标轴内，一般都是在外面的，所以此处设置false
         }else{
-            lineChart.legend.isEnabled = false
+            legend.isEnabled = false
         }
 
         // x轴设置
@@ -135,7 +160,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         leftAxis.setDrawGridLines(false) // 同x轴
         leftAxis.setCenterAxisLabels(false) // 同x轴,y轴的这个属性设置true可能会导致y轴的最顶部被裁剪一部分，导致的显示不全的问题
         leftAxis.granularity = 1f // 同x轴
-        leftAxis.isGranularityEnabled = true // 同x轴
+        leftAxis.isGranularityEnabled = isGranularity // 同x轴
 
 
     }

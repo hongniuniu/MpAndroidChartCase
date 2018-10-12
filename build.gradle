@@ -22,6 +22,9 @@ allprojects {
         maven {
             url 'https://jitpack.io'
         }
+        maven {
+            url 'http://47.93.38.184:8081/nexus/content/repositories/faithhb/'
+        }
     }
 }
 
