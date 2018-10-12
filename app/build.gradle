@@ -31,8 +31,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    // 引入官方的源码库
+    implementation project(':MPChartLib')
     // 引入官方依赖库
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+//    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
     // 指示器
     implementation 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
     implementation 'com.faithhb:toolslib:1.2.5'
