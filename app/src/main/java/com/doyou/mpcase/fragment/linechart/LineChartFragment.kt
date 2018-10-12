@@ -30,6 +30,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         initLineChart(lineThree, false,true)
         initLineChart(lineFour, true,false)
         initLineChart(lineFive, false,true)
+        initLineChart(lineSix, false,false)
 
         lineSectionTv.setOnClickListener(this)
         lineAllTv.setOnClickListener(this)
@@ -42,13 +43,17 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         lineOne.postDelayed({
             LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
 
-            LineChartModule.notifyDataToLine(lineTwo, LineChartModule.VALUE_TYPE.WEEK, false)
+            LineChartModule.notifyDataToLine(lineTwo, LineChartModule.VALUE_TYPE.WEEK, true)
 
             autoCalMatrixScale(lineThree, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.MONTH).toFloat())
             LineChartModule.notifyDataToLine(lineThree, LineChartModule.VALUE_TYPE.MONTH, true)
 
             autoCalMatrixScale(lineFour, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.YEAR).toFloat())
             LineChartModule.notifyDataToLineByMultiple(lineFour)
+
+            val mean = 60f
+            LineChartModule.addLimitLine(lineFive.axisLeft, mean, "平均线 = " + mean.toInt())
+            LineChartModule.notifyDataToLine(lineFive, LineChartModule.VALUE_TYPE.SEASONS, mean, false)
         }, 240)
     }
 

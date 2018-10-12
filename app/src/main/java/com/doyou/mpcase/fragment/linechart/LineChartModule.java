@@ -3,9 +3,12 @@ package com.doyou.mpcase.fragment.linechart;
 import android.graphics.Color;
 import android.util.Log;
 
+import com.dongni.tools.EmptyUtils;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.LimitLine;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -42,15 +45,15 @@ public final class LineChartModule {
         String WEEK = "week";
         String MONTH = "month";
         String YEAR = "year";
+        String SEASONS = "seasons"; // 四季
     }
 
     public static int getCountByValueType(String valueType){
         return xValuesProcess(valueType).length;
     }
 
-    public static String[] xYearMockData() {
-        return new String[]{"2016", "2017", "2018"};
-    }
+    static String[] MOCK_YEARS = {"2016", "2017", "2018"};
+
 
     static int[] COLORS = {Color.rgb(69, 113, 214), Color.rgb(101, 226, 175),
             Color.rgb(255, 196, 0), Color.rgb(255, 105, 83),
@@ -70,10 +73,43 @@ public final class LineChartModule {
                         "10-25", "10-26", "10-27", "10-28", "10-29", "10-30", "10-31"};
             case VALUE_TYPE.YEAR:
                 return new String[]{"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"};
+
+            case VALUE_TYPE.SEASONS:
+                return new String[]{"春", "夏","秋","冬"};
             default:
                 break;
         }
         return null;
+    }
+
+    /**
+     * 添加限制线
+     * @param axis
+     * @param mean
+     */
+    public static void addLimitLine(YAxis axis, float mean){
+        addLimitLine(axis,mean,"");
+    }
+
+    /**
+     * 添加限制线
+     * @param axis
+     * @param mean
+     * @param label
+     */
+    public static void addLimitLine(YAxis axis, float mean, String label) {
+//        LimitLine avgLine = new LimitLine(Float.valueOf(sDecimalFormat.format(mean)));
+        if (EmptyUtils.isNotEmpty(axis.getLimitLines())) {
+            axis.getLimitLines().remove(0);
+        }
+        LimitLine avgLine = new LimitLine(mean);
+        avgLine.enableDashedLine(5.0f, 3.0f, 3.0f); // 虚线
+        avgLine.setLineColor(Color.rgb(255, 196, 1)); // 线颜色
+        if (EmptyUtils.isNotEmpty(label)) {
+            avgLine.setLabel(label);
+            avgLine.setTextColor(Color.rgb(255, 196, 1));
+        }
+        axis.addLimitLine(avgLine);
     }
 
 
@@ -123,10 +159,24 @@ public final class LineChartModule {
      * @param valueType 模拟数据类型
      */
     public static void notifyDataToLine(LineChart chart, String valueType,boolean isFill) {
+        notifyDataToLine(chart,valueType,0f,isFill);
+    }
+
+    /**
+     * 更新图表
+     * @param chart     图表
+     * @param valueType 模拟数据类型
+     * @param mean 平均数
+     * @param isFill 是否填充背景
+     */
+    public static void notifyDataToLine(LineChart chart, String valueType,float mean,boolean isFill) {
+        int maxValue = 0; // 图表数据最大值
         final String[] xVals = xValuesProcess(valueType);
         final List<Entry> yVals = new ArrayList<>(xVals.length);
         for (int i = 0; i < xVals.length; i++) {
-            yVals.add(new Entry(i, (int) (Math.random() * 85) + 40));
+            int y = (int) (Math.random() * 85) + 40;
+            yVals.add(new Entry(i, y));
+            maxValue = Math.max(maxValue, y);
         }
         chart.getAxisLeft().setAxisMinimum(0);
         chart.getXAxis().setAxisMaximum(xVals.length);// 最后一条数据绘制不出来的时候，设置这个可以解决问题
@@ -144,6 +194,11 @@ public final class LineChartModule {
                 return x;
             }
         });
+        if (mean > maxValue) { // 重新设置y轴最大值，当平均数大于图表数据最大值的时候
+            chart.getAxisLeft().setAxisMaximum(mean + 6);
+        } else { // 记得回刷y轴坐标值
+            chart.getAxisLeft().setAxisMaximum(maxValue + 6);
+        }
         setDataLine(chart, yVals,isFill);
     }
 
@@ -217,8 +272,8 @@ public final class LineChartModule {
         final List<Entry> yVals1 = new ArrayList<>(xVals.length);
         final List<Entry> yVals2 = new ArrayList<>(xVals.length);
         final List<Entry> yVals3 = new ArrayList<>(xVals.length);
-        for (int i = 0; i < xYearMockData().length; i++) {
-            labels.add(xYearMockData()[i]);
+        for (int i = 0; i < MOCK_YEARS.length; i++) {
+            labels.add(MOCK_YEARS[i]);
         }
         for (int i = 0; i < xVals.length; i++) {
             yVals1.add(new Entry(i, (float) (Math.random() * 0.2415)));

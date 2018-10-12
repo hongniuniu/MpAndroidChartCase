@@ -196,10 +196,39 @@
             android:layout_marginRight="12dp"
             app:layout_constraintTop_toBottomOf="@id/lineTv5"/>
 
+        <View
+            android:id="@+id/lineBorder5"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:background="#f5f9fe"
+            app:layout_constraintTop_toBottomOf="@id/lineFive"/>
+
+        <TextView
+            android:id="@+id/lineTv6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="12dp"
+            android:text="图表为空的时候"
+            android:textColor="@color/app_black"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/lineBorder5"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lineSix"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            app:layout_constraintTop_toBottomOf="@id/lineTv6"/>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="24dp"
-            app:layout_constraintTop_toBottomOf="@id/lineFive"/>
+            app:layout_constraintTop_toBottomOf="@id/lineSix"/>
 
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
