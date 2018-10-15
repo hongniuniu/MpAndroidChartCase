@@ -52,7 +52,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="12dp"
-                android:text="圆点自定"
+                android:text="圆点自定义"
                 android:textColor="#c2c2c2"
                 android:textSize="13sp"/>
 
