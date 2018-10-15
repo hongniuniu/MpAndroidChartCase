@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.LineChart;
@@ -566,12 +567,12 @@ public class LineChartRenderer extends LineRadarRenderer {
 
                     Entry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
 
-                    if (dataSet.isDrawValuesEnabled()) {
+                    if (dataSet.isDrawValuesEnabled()) { // 绘制图表上统计点的数值
                         drawValue(c, dataSet.getValueFormatter(), entry.getY(), entry, i, x,
                                 y - valOffset, dataSet.getValueTextColor(j / 2));
                     }
 
-                    if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
+                    if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) { // 绘制图表上统计点的图像
 
                         Drawable icon = entry.getIcon();
 
@@ -620,6 +621,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
             ILineDataSet dataSet = dataSets.get(i);
 
+            // 线不可见，不让绘制圆点，没有子节点都跳出单次循环
             if (!dataSet.isVisible() || !dataSet.isDrawCirclesEnabled() ||
                     dataSet.getEntryCount() == 0)
                 continue;
@@ -676,8 +678,22 @@ public class LineChartRenderer extends LineRadarRenderer {
 
                 Bitmap circleBitmap = imageCache.getBitmap(j);
 
-                if (circleBitmap != null) {
-                    c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+                if (circleBitmap != null) { // 开始绘制圆点
+
+                    Log.d("201810151101", "getX = " + e.getX() + "->getEntryCount = " + dataSet.getEntryCount());
+
+//                    if((j+1) % 2 == 0){ // 偶数绘制
+//                        c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+//                    }
+
+//                    if (j % (dataSet.getEntryCount() / 6) == 0) {
+//                        c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+//                    }
+
+                    if (e.isCircle()) {
+                        c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+                    }
+
                 }
             }
         }

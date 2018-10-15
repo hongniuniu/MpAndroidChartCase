@@ -117,17 +117,27 @@ public final class LineChartModule {
         axis.addLimitLine(avgLine);
     }
 
+    private static CstMarkerView cmv;
+    private static void creatMarkerView(LineChart chart) {
+        if (cmv == null) {
+            cmv = new CstMarkerView(chart.getContext(), R.layout.chart_marker_view);
+        } else {
+            cmv.getChartView().removeAllViewsInLayout();
+        }
+        cmv.setChartView(chart);
+        chart.setMarker(cmv);
+    }
+
 
     /**
      * 计算统计点 | 数据更新 | 数据填充
-     *
      * @return
      */
-    private static void setDataLine(LineChart chart, List<Entry> entries, boolean isFill) {
+    private static void setDataLine(LineChart chart, List<Entry> entries, boolean isFill,boolean isMarker) {
 
-        CstMarkerView cmv = new CstMarkerView(chart.getContext(), R.layout.chart_marker_view);
-        cmv.setChartView(chart);
-        chart.setMarker(cmv);
+        if (isMarker) {
+            creatMarkerView(chart);
+        }
 
         LineDataSet dataSet;
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) { // 数据更新
@@ -166,29 +176,59 @@ public final class LineChartModule {
 
     /**
      * 更新图表
-     *
      * @param chart     图表
      * @param valueType 模拟数据类型
+     * @param isFill 是否填充底部区域
      */
     public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill) {
-        notifyDataToLine(chart, valueType, 0f, isFill);
+        notifyDataToLine(chart, valueType, isFill,false,false);
     }
 
     /**
      * 更新图表
-     *
+     * @param chart     图表
+     * @param valueType 模拟数据类型
+     * @param isFill 是否填充底部区域
+     */
+    public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill,boolean isMarker) {
+        notifyDataToLine(chart, valueType, isFill,false,isMarker);
+    }
+
+    /**
+     * 更新图表
+     * @param chart     图表
+     * @param valueType 模拟数据类型
+     * @param isFill 是否填充底部区域
+     * @param isCtlCircle 是否要自己控制图表连线的圆点
+     */
+    public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill, boolean isCtlCircle,boolean isMarker) {
+        notifyDataToLine(chart, valueType,0f,isFill,isCtlCircle,isMarker);
+    }
+
+    /**
+     * 更新图表
      * @param chart     图表
      * @param valueType 模拟数据类型
      * @param mean      平均数
      * @param isFill    是否填充背景
+     * @param isCtlCircle 是否需要自己控制图表连线的圆点显示|隐藏
+     * @param isMarker 是否需要显示marker
      */
-    public static void notifyDataToLine(LineChart chart, String valueType, float mean, boolean isFill) {
+    public static void notifyDataToLine(LineChart chart, String valueType, float mean, boolean isFill,boolean isCtlCircle,boolean isMarker) {
         int maxValue = 0; // 图表数据最大值
         final String[] xVals = xValuesProcess(valueType);
         final List<Entry> yVals = new ArrayList<>(xVals.length);
-        for (int i = 0; i < xVals.length; i++) {
+
+        int xValsLength = xVals.length;
+        int labelCount = chart.getXAxis().getLabelCount();
+        Log.d("201810151101",  "x轴上的字符集合长度 = " + xValsLength + "->LabelCount 前 = " + labelCount);
+        for (int i = 0; i < xValsLength; i++) {
             int y = (int) (Math.random() * 85) + 40;
-            yVals.add(new Entry(i, y));
+            if (isCtlCircle) {
+                yVals.add(new Entry(i, y, i % (xValsLength / labelCount) == 0));
+            } else {
+                yVals.add(new Entry(i, y));
+            }
             maxValue = Math.max(maxValue, y);
         }
         chart.getAxisLeft().setAxisMinimum(0);
@@ -196,6 +236,8 @@ public final class LineChartModule {
         if (xVals.length < 6) {
             chart.getXAxis().setLabelCount(xVals.length);
         }
+
+        Log.d("201810151101", "LabelCount 后 = " + chart.getXAxis().getLabelCount());
         chart.getXAxis().setValueFormatter(new IAxisValueFormatter() { // 自定义x轴显示内容
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -203,7 +245,7 @@ public final class LineChartModule {
                     return "";
                 }
                 String x = xVals[(int) value];
-                Log.d("201806291546", "value = " + value + "-->xvalue = " + x);
+                Log.d("201810151101", "x轴value = " + value + "-->xvalue = " + x);
                 return x;
             }
         });
@@ -212,7 +254,7 @@ public final class LineChartModule {
         } else { // 记得回刷y轴坐标值
             chart.getAxisLeft().setAxisMaximum(maxValue + 6);
         }
-        setDataLine(chart, yVals, isFill);
+        setDataLine(chart, yVals, isFill,isMarker);
     }
 
     /**

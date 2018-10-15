@@ -19,6 +19,8 @@ public class Entry extends BaseEntry implements Parcelable {
     /** the x value */
     private float x = 0f;
 
+    private boolean isCircle = true; // 是否需要绘制圆点
+
     public Entry() {
 
     }
@@ -32,6 +34,11 @@ public class Entry extends BaseEntry implements Parcelable {
     public Entry(float x, float y) {
         super(y);
         this.x = x;
+    }
+
+    public Entry(float x, float y,boolean isCircle) {
+        this(x,y);
+        this.isCircle = isCircle;
     }
 
     /**
@@ -87,6 +94,14 @@ public class Entry extends BaseEntry implements Parcelable {
      */
     public void setX(float x) {
         this.x = x;
+    }
+
+    public boolean isCircle() {
+        return isCircle;
+    }
+
+    public void setCircle(boolean circle) {
+        isCircle = circle;
     }
 
     /**

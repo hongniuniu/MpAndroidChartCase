@@ -20,7 +20,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:paddingTop="12dp"
-            android:text="天统计(细举三种图表设置)"
+            android:text="日统计(四种图表设置)"
             android:textColor="@color/app_black"
             android:textSize="13sp"/>
 
@@ -34,43 +34,55 @@
                 android:id="@+id/lineSectionTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/lineAllTv"
+                android:layout_toLeftOf="@id/lineCircleTv"
                 android:paddingBottom="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:paddingTop="12dp"
                 android:text="分段"
                 android:textColor="#4571D6"
                 android:textSize="13sp"/>
 
             <TextView
+                android:id="@+id/lineCircleTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/lineAllTv"
+                android:paddingBottom="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="12dp"
+                android:text="圆点自定"
+                android:textColor="#c2c2c2"
+                android:textSize="13sp"/>
+
+            <TextView
                 android:id="@+id/lineAllTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/lineFillTv"
+                android:layout_toLeftOf="@id/lineMarkerTv"
                 android:paddingBottom="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:paddingTop="12dp"
                 android:text="全部"
                 android:textColor="#c2c2c2"
                 android:textSize="13sp"/>
 
             <TextView
-                android:id="@+id/lineFillTv"
+                android:id="@+id/lineMarkerTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:paddingBottom="12dp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:paddingTop="12dp"
-                android:text="填充"
+                android:text="标注"
                 android:textColor="#c2c2c2"
                 android:textSize="13sp"/>
 
         </RelativeLayout>
-
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/lineOne"
@@ -96,7 +108,7 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:paddingTop="12dp"
-            android:text="周统计"
+            android:text="周统计(自带图表区域填充)"
             android:textColor="@color/app_black"
             android:textSize="13sp"
             app:layout_constraintTop_toBottomOf="@id/lineBorder1"/>
