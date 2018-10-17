@@ -43,8 +43,12 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
 
     override fun onDestroy() {
         super.onDestroy()
-        releaseChartCache(lineOne)
-        releaseChartCache(lineTwo)
+        if (lineOne != null){
+            releaseChartCache(lineOne)
+        }
+        if (lineTwo != null){
+            releaseChartCache(lineTwo)
+        }
 //        releaseChartCache(lineThree)
 //        releaseChartCache(lineFour)
 //        releaseChartCache(lineFive)
@@ -109,7 +113,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
             }
             R.id.lineCircleTv -> {
                 lineCircleTv.setTextColor(Color.rgb(69, 113, 214))
-                LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
+                LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false,true,true)
                 ToastUtils.showLongToast(activity!!,"图表的圆点数显示和x轴保持一致")
             }
             R.id.lineAllTv -> {
@@ -188,7 +192,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         leftAxis.isGranularityEnabled = isGranularity // 同x轴
     }
 
-    private fun releaseChartCache(lineChart: LineChart){
+    private fun releaseChartCache(lineChart: LineChart) {
         lineChart.destroyDrawingCache()
     }
 }

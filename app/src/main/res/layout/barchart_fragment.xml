@@ -7,10 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/stackBar"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"/>
+
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="barchart"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:gravity="center_horizontal"
+        android:text="barchart"
+        app:layout_constraintTop_toBottomOf="@id/stackBar"/>
 
 </android.support.constraint.ConstraintLayout>
