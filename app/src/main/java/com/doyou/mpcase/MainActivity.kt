@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.doyou.mpcase.bean.TabBean
-import com.doyou.mpcase.fragment.BarChartFragment
+import com.doyou.mpcase.fragment.barchart.BarChartFragment
 import com.doyou.mpcase.fragment.GroupChartFragment
 import com.doyou.mpcase.fragment.PieChartFragment
 import com.doyou.mpcase.fragment.linechart.LineChartFragment

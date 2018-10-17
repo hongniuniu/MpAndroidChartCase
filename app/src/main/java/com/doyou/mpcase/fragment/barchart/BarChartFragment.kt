@@ -1,4 +1,4 @@
-package com.doyou.mpcase.fragment
+package com.doyou.mpcase.fragment.barchart
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
