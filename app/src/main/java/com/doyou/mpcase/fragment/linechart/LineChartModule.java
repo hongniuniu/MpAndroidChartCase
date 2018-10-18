@@ -138,10 +138,70 @@ public final class LineChartModule {
         if (cmv == null) {
             cmv = new CstMarkerView(chart.getContext(), R.layout.chart_marker_view);
         } else {
-            cmv.getChartView().removeAllViewsInLayout();
+            if (cmv.getChartView() != null) {
+                cmv.getChartView().removeAllViewsInLayout();
+            }
         }
         cmv.setChartView(chart);
         chart.setMarker(cmv);
+    }
+
+    /**
+     * 资源释放
+     */
+    public static void release() {
+        cmv = null;
+    }
+
+    /**
+     * 动态获取x轴最终label个数
+     * @param chart
+     * @param entries
+     * @param isFill 是否填充
+     * @return
+     */
+    private static Object[] caclEndLabelCount(LineChart chart, List<Entry> entries,boolean isFill) {
+        LineDataSet dataSet = new LineDataSet(entries);
+        dataSet.setLineWidth(0.8f); // 曲线，线宽
+        dataSet.setCircleRadius(2.f);
+        dataSet.setColor(Color.rgb(69, 113, 214)); // 曲线颜色自定义
+        dataSet.setCircleColor(Color.rgb(69, 113, 214)); // 曲线上的圆点颜色自定义
+        dataSet.setDrawFilled(isFill); // 填充统计点下方的区域
+        if (isFill) {
+            dataSet.setFillColor(Color.rgb(95, 124, 252)); // 填充区域颜色自定义
+        }
+        dataSet.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER); // 曲线
+        dataSet.setDrawValues(false);// 隐藏每条数据的顶部值,默认显示
+        dataSet.setHighLightColor(Color.rgb(244, 117, 117));// 高亮颜色,默认RGB(255, 187, 115)
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        int endLabelCount = chart.getXAxis().mEntryCount;
+        Object object[] = new Object[]{endLabelCount, entries};
+        return object;
+    }
+
+    /**
+     * 计算统计点 | 数据更新 | 数据填充
+     * @param entries 统计点集合对象
+     * @param isMarker 是否需要显示标注，在点击的时候
+     * @return
+     */
+    private static void setDataLineBySub(LineChart chart, List<Entry> entries, boolean isMarker) {
+
+        if (isMarker) {
+            creatMarkerView(chart);
+        }
+
+        if (chart.getData() != null && chart.getData().getDataSetCount() > 0) { // 数据更新
+            Log.d("201810151101", "->mEntryCount->3 = " + chart.getXAxis().mEntryCount);
+            LineDataSet dataSet = (LineDataSet) chart.getData().getDataSetByIndex(0);
+            dataSet.setValues(entries);
+            chart.getData().notifyDataChanged();
+            chart.notifyDataSetChanged();
+        }
+
+        Log.d("201810151101", "->mEntryCount->2 = " + chart.getXAxis().mEntryCount + "->chart.getData().getEntryCount()" + chart.getData().getEntryCount());
+        chart.animateX(CHART_ANIM_LINE_DURATION, Easing.EasingOption.Linear);
     }
 
 
@@ -150,11 +210,9 @@ public final class LineChartModule {
      * @return
      */
     private static void setDataLine(LineChart chart, List<Entry> entries, boolean isFill,boolean isMarker) {
-
         if (isMarker) {
             creatMarkerView(chart);
         }
-
         LineDataSet dataSet;
         if (chart.getData() != null && chart.getData().getDataSetCount() > 0) { // 数据更新
             dataSet = (LineDataSet) chart.getData().getDataSetByIndex(0);
@@ -182,11 +240,11 @@ public final class LineChartModule {
             });
             dataSet.setValueTextColor(Color.rgb(153, 153, 153)); // 设置每条数据的顶部值的颜色
             dataSet.setValueTextSize(9); // 设置每条数据的顶部值的大小
-
             LineData lineData = new LineData(dataSet);
             chart.setData(lineData);
         }
 
+        Log.d("201810151101","->mEntryCount->2 = " + chart.getXAxis().mEntryCount + "->chart.getData().getEntryCount()" + chart.getData().getEntryCount());
         chart.animateX(CHART_ANIM_LINE_DURATION, Easing.EasingOption.Linear);
     }
 
@@ -197,7 +255,7 @@ public final class LineChartModule {
      * @param isFill 是否填充底部区域
      */
     public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill) {
-        notifyDataToLine(chart, valueType, isFill,false,false);
+        notifyDataToLine(chart, valueType, isFill,false);
     }
 
     /**
@@ -207,18 +265,7 @@ public final class LineChartModule {
      * @param isFill 是否填充底部区域
      */
     public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill,boolean isMarker) {
-        notifyDataToLine(chart, valueType, isFill,false,isMarker);
-    }
-
-    /**
-     * 更新图表
-     * @param chart     图表
-     * @param valueType 模拟数据类型
-     * @param isFill 是否填充底部区域
-     * @param isCtlCircle 是否要自己控制图表连线的圆点
-     */
-    public static void notifyDataToLine(LineChart chart, String valueType, boolean isFill, boolean isCtlCircle,boolean isMarker) {
-        notifyDataToLine(chart, valueType,0f,isFill,isCtlCircle,isMarker);
+        notifyDataToLine(chart, valueType,0f, isFill,isMarker);
     }
 
     /**
@@ -227,33 +274,25 @@ public final class LineChartModule {
      * @param valueType 模拟数据类型
      * @param mean      平均数
      * @param isFill    是否填充背景
-     * @param isCtlCircle 是否需要自己控制图表连线的圆点显示|隐藏
      * @param isMarker 是否需要显示marker
      */
-    public static void notifyDataToLine(LineChart chart, String valueType, float mean, boolean isFill,boolean isCtlCircle,boolean isMarker) {
+    public static void notifyDataToLine(LineChart chart, String valueType, float mean, boolean isFill,boolean isMarker) {
         int maxValue = 0; // 图表数据最大值
         final String[] xVals = xValuesProcess(valueType);
         final List<Entry> yVals = new ArrayList<>(xVals.length);
-
         int xValsLength = xVals.length;
-        int labelCount = chart.getXAxis().getLabelCount();
-        Log.d("201810151101",  "x轴上的字符集合长度 = " + xValsLength + "->LabelCount 前 = " + labelCount);
         for (int i = 0; i < xValsLength; i++) {
             int y = (int) (Math.random() * 85) + 40;
-            if (isCtlCircle) {
-                yVals.add(new Entry(i, y, i % (xValsLength / labelCount) == 0));
-            } else {
-                yVals.add(new Entry(i, y));
-            }
+            yVals.add(new Entry(i, y));
             maxValue = Math.max(maxValue, y);
         }
+
         chart.getAxisLeft().setAxisMinimum(0);
         chart.getXAxis().setAxisMaximum(xVals.length);// 最后一条数据绘制不出来的时候，设置这个可以解决问题
         if (xVals.length < 6) {
             chart.getXAxis().setLabelCount(xVals.length);
         }
 
-        Log.d("201810151101", "LabelCount 后 = " + chart.getXAxis().getLabelCount());
         chart.getXAxis().setValueFormatter(new IAxisValueFormatter() { // 自定义x轴显示内容
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -261,7 +300,7 @@ public final class LineChartModule {
                     return "";
                 }
                 String x = xVals[(int) value];
-                Log.d("201810151101", "x轴value = " + value + "-->xvalue = " + x);
+//                Log.d("201810151101", "x轴value = " + value + "-->xvalue = " + x);
                 return x;
             }
         });
@@ -270,7 +309,89 @@ public final class LineChartModule {
         } else { // 记得回刷y轴坐标值
             chart.getAxisLeft().setAxisMaximum(maxValue + 6);
         }
+
+        Log.d("201810151101","->mEntryCount = " + chart.getXAxis().mEntryCount);
         setDataLine(chart, yVals, isFill,isMarker);
+    }
+
+
+    /**
+     * 更新图表,一屏分段显示,函数重载
+     * @param chart
+     * @param valueType
+     * @param isFill
+     * @param isMarker
+     */
+    public static void notifyDataToLineBySub(LineChart chart, String valueType, boolean isFill,boolean isMarker) {
+        notifyDataToLineBySub(chart,valueType,0f,isFill,isMarker);
+    }
+
+    /**
+     * 更新图表,一屏分段显示
+     * @param chart     图表
+     * @param valueType 模拟数据类型
+     * @param mean      平均数
+     * @param isFill    是否填充背景
+     * @param isMarker 是否需要显示标注，点击的时候
+     */
+    public static void notifyDataToLineBySub(LineChart chart, String valueType, float mean, boolean isFill,boolean isMarker) {
+        int maxValue = 0; // 图表数据最大值
+        final String[] xVals = xValuesProcess(valueType);
+        final List<Entry> yVals = new ArrayList<>(xVals.length);
+
+        // 1.图表数据组装
+        int xValsLength = xVals.length;
+        for (int i = 0; i < xValsLength; i++) {
+            int y = (int) (Math.random() * 85) + 40;
+            yVals.add(new Entry(i, y, false));
+            maxValue = Math.max(maxValue, y);
+        }
+
+        // 2.图表数据初始化
+        Object[] objs = caclEndLabelCount(chart, yVals,isFill);
+        // 分段数
+        int subCount = (int) objs[0];
+        // 那么每段之间的间隔值
+        subCount = xValsLength / subCount;
+        if (xValsLength % subCount > 0) {
+            subCount = subCount + 1;
+        }
+
+        // 3.更新统计点对象Entry，哪些是需要显示的点
+        List<Entry> entries = (List<Entry>) objs[1];
+        for (int i = 0; i < entries.size(); i++) {
+            Entry entry = entries.get(i);
+            boolean isNeedCircle = (i % subCount == 0);
+            if (isNeedCircle) {
+                Log.d("201810151101", "需要圆点的索引 = " + i
+                        + "->label = " + xVals[i] + "->subCount = " + subCount
+                        + "->xValsLength = " + xValsLength);
+                entry.setCircle(true);
+            }
+        }
+
+        // 4.x轴值，自定义
+        chart.getXAxis().setValueFormatter(new IAxisValueFormatter() { // 自定义x轴显示内容
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                if ((int) value >= xVals.length || (int) value < 0) {
+                    return "";
+                }
+                String x = xVals[(int) value];
+//                Log.d("201810151101", "x轴value = " + value + "-->xvalue = " + x);
+                return x;
+            }
+        });
+
+        // 5.平均线线处理
+        if (mean > maxValue) { // 重新设置y轴最大值，当平均数大于图表数据最大值的时候
+            chart.getAxisLeft().setAxisMaximum(mean + 6);
+        } else { // 记得回刷y轴坐标值
+            chart.getAxisLeft().setAxisMaximum(maxValue + 6);
+        }
+
+        // 6.数据刷新
+        setDataLineBySub(chart, yVals,isMarker);
     }
 
     /**

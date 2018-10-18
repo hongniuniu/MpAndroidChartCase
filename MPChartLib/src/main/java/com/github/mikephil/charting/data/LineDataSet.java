@@ -64,6 +64,9 @@ public class LineDataSet extends LineRadarDataSet<Entry> implements ILineDataSet
 
     private boolean mDrawCircleHole = true;
 
+    public LineDataSet(List<Entry> yVals) {
+        this(yVals,"");
+    }
 
     public LineDataSet(List<Entry> yVals, String label) {
         super(yVals, label);

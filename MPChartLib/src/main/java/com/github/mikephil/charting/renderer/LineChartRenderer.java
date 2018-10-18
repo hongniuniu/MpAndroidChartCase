@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.charts.LineChart;
@@ -680,7 +679,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
                 if (circleBitmap != null) { // 开始绘制圆点
 
-                    Log.d("201810151101", "getX = " + e.getX() + "->getEntryCount = " + dataSet.getEntryCount());
+//                    Log.d("201810151101", "getX = " + e.getX() + "->getEntryCount = " + dataSet.getEntryCount());
 
 //                    if((j+1) % 2 == 0){ // 偶数绘制
 //                        c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
@@ -689,6 +688,13 @@ public class LineChartRenderer extends LineRadarRenderer {
 //                    if (j % (dataSet.getEntryCount() / 6) == 0) {
 //                        c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
 //                    }
+
+//                    Log.d("201810151101",  "getMaxVisibleCount = " + mChart.getMaxVisibleCount()); x
+//                    Log.d("201810151101",  "getEntryCount = " + mChart.getLineData().getEntryCount()); x
+//                    Log.d("201810151101",  "getXRange = " + mChart.getXRange()); x
+//                    Log.d("201810151101",  "getXRange = " + e.getX()); x
+
+
 
                     if (e.isCircle()) {
                         c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);

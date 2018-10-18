@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.dongni.tools.ToastUtils
 import com.doyou.mpcase.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.Legend
@@ -28,15 +27,17 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         super.onViewCreated(view, savedInstanceState)
         initLineChart(lineOne, false,true)
         initLineChart(lineTwo, false,true)
-//        initLineChart(lineThree, false,true)
-//        initLineChart(lineFour, true,false)
-//        initLineChart(lineFive, false,true)
-//        initLineChart(lineSix, false,false)
+        initLineChart(lineThree, false,true)
+        initLineChart(lineFour, true,false)
+        initLineChart(lineFive, false,true)
+        initLineChart(lineSix, false,true)
+        initLineChart(lineSeven, false,false)
 
         lineSectionTv.setOnClickListener(this)
-        lineCircleTv.setOnClickListener(this)
+//        lineCircleTv.setOnClickListener(this)
         lineAllTv.setOnClickListener(this)
         lineMarkerTv.setOnClickListener(this)
+        lineTv6.setOnClickListener(this)
 
         loadData()
     }
@@ -49,10 +50,23 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         if (lineTwo != null){
             releaseChartCache(lineTwo)
         }
-//        releaseChartCache(lineThree)
-//        releaseChartCache(lineFour)
-//        releaseChartCache(lineFive)
-//        releaseChartCache(lineSix)
+        if (lineThree != null){
+            releaseChartCache(lineThree)
+        }
+        if (lineFour != null){
+            releaseChartCache(lineFour)
+        }
+        if (lineFive != null){
+            releaseChartCache(lineFive)
+        }
+        if (lineSix != null){
+            releaseChartCache(lineSix)
+        }
+        if (lineSeven != null){
+            releaseChartCache(lineSeven)
+        }
+        LineChartModule.release()
+
     }
 
     private fun loadData() {
@@ -60,16 +74,18 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
             LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
 
             LineChartModule.notifyDataToLine(lineTwo, LineChartModule.VALUE_TYPE.WEEK, true)
-//
-//            autoCalMatrixScale(lineThree, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.MONTH).toFloat())
-//            LineChartModule.notifyDataToLine(lineThree, LineChartModule.VALUE_TYPE.MONTH, true)
-//
-//            autoCalMatrixScale(lineFour, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.YEAR).toFloat())
-//            LineChartModule.notifyDataToLineByMultiple(lineFour)
-//
-//            val mean = 60f
-//            LineChartModule.addLimitLine(lineFive.axisLeft, mean, "平均线 = " + mean.toInt())
-//            LineChartModule.notifyDataToLine(lineFive, LineChartModule.VALUE_TYPE.SEASONS, mean, false)
+
+            autoCalMatrixScale(lineThree, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.MONTH).toFloat())
+            LineChartModule.notifyDataToLine(lineThree, LineChartModule.VALUE_TYPE.MONTH, true)
+
+            autoCalMatrixScale(lineFour, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.YEAR).toFloat())
+            LineChartModule.notifyDataToLineByMultiple(lineFour)
+
+            val mean = 60f
+            LineChartModule.addLimitLine(lineFive.axisLeft, mean, "平均线 = " + mean.toInt())
+            LineChartModule.notifyDataToLine(lineFive, LineChartModule.VALUE_TYPE.SEASONS, mean, false,false)
+
+            LineChartModule.notifyDataToLineBySub(lineSix, LineChartModule.VALUE_TYPE.MORE, false,true)
         }, 240)
     }
 
@@ -101,7 +117,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
     private var mIsFill: Boolean = false
     override fun onClick(v: View?) {
         lineSectionTv.setTextColor(Color.rgb(194, 194, 194))
-        lineCircleTv.setTextColor(Color.rgb(194, 194, 194))
+//        lineCircleTv.setTextColor(Color.rgb(194, 194, 194))
         lineAllTv.setTextColor(Color.rgb(194, 194, 194))
         lineMarkerTv.setTextColor(Color.rgb(194, 194, 194))
         when (v!!.id) {
@@ -111,11 +127,11 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
                 lineOne.viewPortHandler.setMinMaxScaleX(1f, 1f)
                 LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false)
             }
-            R.id.lineCircleTv -> {
-                lineCircleTv.setTextColor(Color.rgb(69, 113, 214))
-                LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false,true,true)
-                ToastUtils.showLongToast(activity!!,"图表的圆点数显示和x轴保持一致")
-            }
+//            R.id.lineCircleTv -> {
+////                lineCircleTv.setTextColor(Color.rgb(69, 113, 214))
+////                LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false,true,true)
+//                showLongToast(activity!!,"图表的圆点数显示和x轴保持一致")
+//            }
             R.id.lineAllTv -> {
                 lineAllTv.setTextColor(Color.rgb(69, 113, 214))
                 autoCalMatrixScale(lineOne, LineChartModule.getCountByValueType(LineChartModule.VALUE_TYPE.DAY).toFloat())
@@ -125,6 +141,12 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
                 mIsFill = true
                 lineMarkerTv.setTextColor(Color.rgb(69, 113, 214))
                 LineChartModule.notifyDataToLine(lineOne, LineChartModule.VALUE_TYPE.DAY, false,true)
+            }
+            R.id.lineTv6 ->{
+                LineChartModule.notifyDataToLineBySub(lineSix, LineChartModule.VALUE_TYPE.MORE, true, true)
+            }
+            else -> {
+
             }
         }
     }
@@ -179,6 +201,7 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
         xAxis.granularity = 1f // 避免缩放时导致的标签重叠
         xAxis.isGranularityEnabled = true // 在轴值间隔上 启用/禁用 粒度控制。如果启用，轴间隔不允许低于某个粒度。默认值:假
 //        xAxis.axisLineWidth = 1f // 设置x轴的高度
+        xAxis.setLabelCount(8,false) // 第二个参数切记设置成true，不然会导致点和坐标不居中
 
         // y轴设置
         val leftAxis = lineChart.axisLeft
@@ -193,6 +216,8 @@ class LineChartFragment : Fragment() ,View.OnClickListener{
     }
 
     private fun releaseChartCache(lineChart: LineChart) {
-        lineChart.destroyDrawingCache()
+        if (lineChart != null){
+            lineChart.destroyDrawingCache()
+        }
     }
 }
