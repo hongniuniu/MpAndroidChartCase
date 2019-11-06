@@ -62,6 +62,10 @@ public class BarChart extends BarLineChartBase<BarData> implements BarDataProvid
         getXAxis().setSpaceMax(0.5f);
     }
 
+    public void setRadiusB(boolean radius){
+        mRenderer.setRadiusB(radius);
+    }
+
     @Override
     protected void calcMinMax() {
 
